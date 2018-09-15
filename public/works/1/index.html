@@ -3,16 +3,50 @@
 <head>
 	<meta charset="UTF-8">
 	<title>[ЛР1] Методы теории игр в информационной безопасности</title>
-
-	<script src="/vendor/math.js"></script>
-	<script src="/vendor/MathJax.js?config=TeX-MML-AM_CHTML"></script>
 </head>
 <body>
+<header>
+	<h1>Линейное программирование. Симплекс метод</h1>
+	<h2>Лабораторная работа №1</h2>
 
-<p>
-	When \(a \ne 0\), there are two solutions to \(ax^2 + bx + c = 0\) and they are
-	$$x = {-b \pm \sqrt{b^2-4ac} \over 2a}.$$
-</p>
+	<p><strong>Исполнитель:</strong> Остапенко Анатолий Викторович, группа ИУ8-112</p>
+	<p><em>Вариант 7</em></p>
+</header>
+
+<main>
+	<h3>Цель работы</h3>
+	<p>Изучить постановку задачи линейного программирования (ЛП); овладеть навыками решения задач ЛП с помощью симплекс-метода.</p>
+
+	<h3>Задание</h3>
+	<p>
+		Найти вектор \( \mathbf{x} = (x_1, x_2, ..., x_n)^T \) как решение следующей задачи:
+		$$F = \mathbf{cx} \to \mathrm{max},$$
+		$$\mathbf{Ax} \le \mathbf{b},$$
+		$$x_i \ge 0,  i = \overline{1..n}.$$
+	</p>
+
+	<h3>Исходные данные</h3>
+	<p>
+		$$\mathbf{c} = (6, 6, 6)$$
+		$$\mathbf{A} = \begin{pmatrix}
+		4 & 1 & 1 \\
+		1 & 2 & 0 \\
+		0 & 0,5 & 4
+		\end{pmatrix}$$
+	</p>
+</main>
+
+
+<section>
+	<h3>Выполнение работы</h3>
+</section>
+
+
+<script type="module" src="/js/works/1.js"></script>
+
+<script src="/vendor/math.js"></script>
+<script src="/vendor/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+
 <script src="/reload/reload.js"></script>
 </body>
 </html>

@@ -3,3 +3,6 @@
 
 
 
+```
+curl -O https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/...
+```
