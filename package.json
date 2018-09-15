@@ -1,0 +1,24 @@
+{
+  "name": "game-theory",
+  "version": "1.0.0",
+  "description": "Лабораторные работы по курсу 'Методы теории игр в информационной безопасности'",
+  "scripts": {
+    "start": "reload -b -d ./public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KOPTE3/game-theory.git"
+  },
+  "author": {
+    "name": "Anatoliy Ostapenko",
+    "email": "akamandusa@yandex.ru",
+    "url": "https://github.com/KOPTE3"
+  },
+  "bugs": {
+    "url": "https://github.com/KOPTE3/game-theory/issues"
+  },
+  "homepage": "https://github.com/KOPTE3/game-theory#readme",
+  "devDependencies": {
+    "reload": "^2.3.1"
+  }
+}
