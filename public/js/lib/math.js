@@ -29,7 +29,12 @@ export function toPolynomial (coeffs, variable) {
 			sign = '+';
 		}
 
-		const summand = `${sign} ${toTex(coeff)}${variable}_{${pos + 1}}`;
+		let coeffStr = '';
+		if (!math.equal(coeff, 1)) {
+			coeffStr = toTex(coeff);
+		}
+
+		const summand = `${sign} ${coeffStr}${variable}_{${pos + 1}}`;
 		summands.push(summand);
 	});
 

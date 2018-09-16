@@ -1,9 +1,9 @@
-import {toPolynomial, toTex} from '../math.js';
+import math, {toPolynomial, toTex} from '../math.js';
 
 const temp = {
 	leq: '\\leq',
 	geq: '\\geq',
-	e: '=',
+	e: '='
 };
 
 export default class SimplexMethod {
@@ -16,18 +16,76 @@ export default class SimplexMethod {
 	 */
 	constructor(task) {
 		this.c = task.c;
-		this.A = task.A;
 		this.b = task.b;
+		this.A = task.A;
 		this.aspiration = task.aspiration;
 		this.conditions = task.conditions;
+
+		this.inverted = false;
+		this.size = this.c.length;
+	}
+
+	canonize() {
+		if (this.aspiration === 'max') {
+			this.c = this.c.map(item => math.unaryMinus(item));
+			this.inverted = true;
+			this.aspiration = 'min';
+		}
+
+		this.conditions.forEach(function (condition, pos) {
+			switch (condition) {
+				case 'leq': {
+					this.c.push(math.number(0));
+					this.A.forEach(function (line, p) {
+						if (p === pos) {
+							line.push(math.number(1));
+						} else {
+							line.push(math.number(0));
+						}
+					});
+					break;
+				}
+
+				case 'geq': {
+					this.c.push(math.number(0));
+					this.A.forEach(function (line, p) {
+						if (p === pos) {
+							line.push(math.number(-1));
+						} else {
+							line.push(math.number(0));
+						}
+					});
+					break;
+				}
+
+				case 'e': {
+					break;
+				}
+			}
+
+			this.conditions[pos] = 'e';
+		}.bind(this));
+	}
+
+	clone() {
+		return new SimplexMethod({
+			c: this.c.map(item => math.clone(item)),
+			b: this.b.map(item => math.clone(item)),
+			A: this.A.map(line => line.map(item => math.clone(item))),
+			aspiration: this.aspiration,
+			conditions: this.conditions.slice(0),
+
+			inverted: this.inverted,
+			size: this.size
+		});
 	}
 
 	print() {
-		let F = 'F = ' + toPolynomial(this.c, 'x') + ' \\to ';
+		let F = `F${this.inverted ? '\'' : ''} = ${toPolynomial(this.c, 'x')} \\to `;
 		if (this.aspiration === 'max') {
-			F += '\\mathrm{max}'
+			F += '\\mathrm{max}';
 		} else {
-			F += '\\mathrm{min}'
+			F += '\\mathrm{min}';
 		}
 
 		const condParts = [];
@@ -47,6 +105,6 @@ export default class SimplexMethod {
 		$$${F},$$
 		$$\\begin{cases} ${condParts.join(' \\\\ ')} \\end{cases},$$
 		$$x_i \\ge 0,  i = \\overline{1..${this.c.length}}.$$
-		`
+		`;
 	}
 }

@@ -5,6 +5,7 @@ import SimplexMethod from '../lib/simplex-method/index.js';
 console.log('Лабораторная работа №1');
 
 const p1 = document.getElementById('p1');
+const p2 = document.getElementById('p2');
 
 const task = new SimplexMethod({
 	c: [
@@ -18,15 +19,17 @@ const task = new SimplexMethod({
 		math.number(8)
 	],
 	aspiration: 'max',
-	conditions: [ 'leq', 'leq', 'leq' ],
+	conditions: ['leq', 'leq', 'leq'],
 	A: [
-		[ math.number(4), math.number(1), math.number(1) ],
-		[ math.number(1), math.number(2), math.number(0) ],
-		[ math.number(0), math.fraction(1, 2), math.number(4) ]
+		[math.number(4), math.number(1), math.number(1)],
+		[math.number(1), math.number(2), math.number(0)],
+		[math.number(0), math.fraction(1, 2), math.number(4)]
 	]
 });
 
-const taskLatexString = task.print();
+p1.innerHTML = task.print();
 
-p1.innerHTML = taskLatexString;
+task.canonize();
+
+p2.innerHTML = task.print();
 
