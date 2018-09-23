@@ -59,8 +59,6 @@ export default class SimplexMethod {
 			ST[FRow][j] = math.unaryMinus(this.c[j - 1]);
 		}.bind(this));
 
-		console.dir(ST);
-
 		this.ST = ST;
 		this.freeVars = this.free.slice(0);
 		this.basisVars = this.basis.slice(0);
@@ -121,6 +119,17 @@ export default class SimplexMethod {
 		});
 	}
 
+	isOptimalSolutionValid() {
+		const FRow = this.ST.length - 1;
+		return this.ST[FRow].every((num, i) => {
+			if (i === 0) {
+				return true;
+			}
+
+			return math.smallerEq(num, 0);
+		});
+	}
+
 	baseSolutionFindResolvingItem() {
 		const FRow = this.ST.length - 1;
 		if (this.isBaseSolutionValid()) {
@@ -165,6 +174,53 @@ export default class SimplexMethod {
 		};
 	}
 
+	optimalSolutionFindResolvingItem() {
+		const FRow = this.ST.length - 1;
+		if (this.isOptimalSolutionValid()) {
+			throw new Error('Оптимальное решение уже найдено');
+		}
+
+		const resolvingColl = this.ST[FRow].findIndex((item, pos) => {
+			if (pos === 0) {
+				return;
+			}
+
+			return math.larger(item, 0);
+		});
+
+		if (resolvingColl === -1) {
+			throw new Error('Оптимальное решение уже найдено');
+		}
+
+		let min = Infinity;
+		let minIndex = -1;
+
+		this.ST.forEach((line, pos) => {
+			if (pos === FRow) {
+				return;
+			}
+
+			if (math.smallerEq(line[resolvingColl], 0)) {
+				return;
+			}
+
+			const quotient = math.divide(line[0], line[resolvingColl]);
+			if (math.larger(quotient, 0) && (min === Infinity || math.smaller(quotient, min))) {
+				min = quotient;
+				minIndex = pos;
+			}
+		});
+
+		if (minIndex === -1) {
+			throw new Error('Оптимального решения не существует');
+		}
+
+		return {
+			row: minIndex + 1,
+			coll: resolvingColl
+		};
+	}
+
 	transformJordan({row, coll}) {
 		const rows = this.ST.length;
 		const colls = this.ST[0].length;
@@ -179,8 +235,6 @@ export default class SimplexMethod {
 
 		const R = row - 1;
 		const K = coll;
-
-		console.dir({d: 1, n: ST[R][K]});
 
 		// разрешающий элемент
 		newST[R][K] = math.divide(math.fraction(1), math.fraction(ST[R][K]));
@@ -225,6 +279,46 @@ export default class SimplexMethod {
 		const temp = this.freeVars[row - 1];
 		this.freeVars[row - 1] = this.basisVars[coll - 1];
 		this.basisVars[coll - 1] = temp;
+	}
+
+	printSolution() {
+		let html = '';
+		const xVector = [];
+		for (let n = 1; n <= this.c.length; n++) {
+			if (this.basisVars.includes(n)) {
+				html += `
+					$$ x_{${n}}=0 \\geq 0, $$
+				`;
+				xVector.push(math.fraction(0));
+				continue;
+			}
+
+			const row = this.freeVars.indexOf(n);
+			if (row === -1) {
+				throw new Error(`Что-то пошло не так`);
+			}
+
+			html += `
+				$$ x_{${n}}=${toTex(this.ST[row][0])} \\geq 0, $$
+			`;
+			xVector.push(math.fraction(this.ST[row][0]));
+		}
+
+		const F = xVector.reduce(function (sum, x, position) {
+			return math.add(sum, math.multiply(x, this.c[position]));
+		}.bind(this), math.fraction(0));
+
+		html += `
+			$$ F${this.inverted ? '\'' : ''}=${toTex(F)} $$
+		`;
+
+		if (this.inverted) {
+			html += `
+				$$ F=${toTex(math.unaryMinus(F))} $$
+			`;
+		}
+
+		return html;
 	}
 
 	canonize() {
@@ -304,9 +398,6 @@ export default class SimplexMethod {
 
 			condParts.push(line);
 		}.bind(this));
-
-		console.dir(condParts);
-
 
 		return `
 		$$${F},$$
