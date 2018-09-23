@@ -1,0 +1,22 @@
+.simplex-table {
+	margin: 0 auto;
+	border: 0;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.simplex-table thead th {
+	border-bottom: black solid 1px;
+}
+
+.simplex-table th,
+.simplex-table td {
+	border-left: black solid 1px;
+	padding: 4px 20px;
+	text-align: center;
+}
+
+.simplex-table th:first-child,
+.simplex-table td:first-child {
+	border-left: none;
+}

@@ -23,6 +23,208 @@ export default class SimplexMethod {
 
 		this.inverted = false;
 		this.size = this.c.length;
+
+		this.basis = [];
+		this.free = [];
+		for (let n = 1; n <= this.size; n++) {
+			this.basis.push(n);
+		}
+
+		this.ST = null;
+	}
+
+	matrixPrepare() {
+		this.free.forEach(function (n, pos) {
+			if (math.equal(this.A[pos][n - 1], -1)) {
+				this.A[pos] = this.A[pos].map(item => math.unaryMinus(item));
+				this.b[pos] = math.unaryMinus(this.b[pos]);
+			}
+		}.bind(this));
+
+		const ST = [];
+		const FRow = this.free.length;
+		for (let i = 0; i < this.free.length + 1; i++) {
+			ST.push([]);
+		}
+
+		for (let i = 0; i < this.free.length; i++) {
+			ST[i][0] = this.b[i];
+			this.basis.forEach(function (j) {
+				ST[i][j] = this.A[i][j - 1];
+			}.bind(this));
+		}
+
+		ST[FRow][0] = math.number(0);
+		this.basis.forEach(function (j) {
+			ST[FRow][j] = math.unaryMinus(this.c[j - 1]);
+		}.bind(this));
+
+		console.dir(ST);
+
+		this.ST = ST;
+		this.freeVars = this.free.slice(0);
+		this.basisVars = this.basis.slice(0);
+	}
+
+	printSimplexTable() {
+		const tableHead = `
+<tr>
+	<th></th>
+	<th>\\( s_{i0} \\)</th>
+	${this.basisVars.map(n => `<th>\\( x_{${n}} \\)</th>`).join('')}
+</tr>
+		`;
+
+		const trs = [];
+		const FRow = this.ST.length - 1;
+
+		this.freeVars.forEach(function (n, i) {
+			const tr = `
+<tr>
+	<td>\\( x_{${n}} \\)</td>
+	${this.ST[i].map(function (_, j) {
+				return `<td>\\( ${toTex(this.ST[i][j])} \\)</td>`;
+			}.bind(this)).join('')}
+</tr>
+			`;
+
+			trs.push(tr);
+		}.bind(this));
+
+		trs.push(`
+<tr>
+	<td>\\( F \\)</td>
+	${this.ST[FRow].map(function (_, j) {
+			return `<td>\\( ${toTex(this.ST[FRow][j])} \\)</td>`;
+		}.bind(this)).join('')}
+</tr>
+		`);
+
+		const tableHTML = `
+		<table class="simplex-table">
+			<thead>${tableHead}</thead>
+			<tbody>${trs.join('')}</tbody>
+		</table>
+		`;
+
+		return tableHTML;
+	}
+
+	isBaseSolutionValid() {
+		const FRow = this.ST.length - 1;
+		return this.ST.every((line, i) => {
+			if (i === FRow) {
+				return true;
+			}
+
+			return math.largerEq(line[0], 0);
+		});
+	}
+
+	baseSolutionFindResolvingItem() {
+		const FRow = this.ST.length - 1;
+		if (this.isBaseSolutionValid()) {
+			throw new Error('Опорное решение уже найдено');
+		}
+
+		const s0NegativeRow = this.ST.findIndex((line) => math.smaller(line[0], 0));
+		const resolvingColl = this.ST[s0NegativeRow].findIndex((item, pos) => {
+			if (pos === 0) {
+				return;
+			}
+
+			return math.smaller(item, 0);
+		});
+
+		if (resolvingColl === -1) {
+			throw new Error('Нет допустимых решений');
+		}
+
+		let min = Infinity;
+		let minIndex = -1;
+
+		this.ST.forEach((line, pos) => {
+			if (pos === FRow) {
+				return;
+			}
+
+			const quotient = math.divide(line[0], line[resolvingColl]);
+			if (math.larger(quotient, 0) && math.smaller(quotient, min)) {
+				min = quotient;
+				minIndex = pos;
+			}
+		});
+
+		if (minIndex === -1) {
+			throw new Error('Что-то пошло не так');
+		}
+
+		return {
+			row: minIndex + 1,
+			coll: resolvingColl
+		};
+	}
+
+	transformJordan({row, coll}) {
+		const rows = this.ST.length;
+		const colls = this.ST[0].length;
+		const ST = this.ST;
+		const newST = [];
+		for (let i = 0; i < rows; i++) {
+			newST.push([]);
+			for (let j = 0; j < colls; j++) {
+				newST[i][j] = math.number(0);
+			}
+		}
+
+		const R = row - 1;
+		const K = coll;
+
+		console.dir({d: 1, n: ST[R][K]});
+
+		// разрешающий элемент
+		newST[R][K] = math.divide(math.fraction(1), math.fraction(ST[R][K]));
+
+		// разрешающая строка
+		for (let j = 0; j < colls; j++) {
+			if (j === K) {
+				continue;
+			}
+
+			newST[R][j] = math.divide(math.fraction(ST[R][j]), math.fraction(ST[R][K]));
+		}
+
+		// разрешающий столбец
+		for (let i = 0; i < rows; i++) {
+			if (i === R) {
+				continue;
+			}
+
+			newST[i][K] = math.divide(math.unaryMinus(math.fraction(ST[i][K])), math.fraction(ST[R][K]));
+		}
+
+		// остальные элементы
+		for (let i = 0; i < rows; i++) {
+			for (let j = 0; j < colls; j++) {
+				if (i === R || j === K) {
+					continue;
+				}
+
+				newST[i][j] = math.subtract(
+					math.fraction(ST[i][j]),
+					math.divide(
+						math.multiply(math.fraction(ST[i][K]), math.fraction(ST[R][j])),
+						math.fraction(ST[R][K])
+					)
+				);
+			}
+		}
+
+		this.ST = newST;
+
+		const temp = this.freeVars[row - 1];
+		this.freeVars[row - 1] = this.basisVars[coll - 1];
+		this.basisVars[coll - 1] = temp;
 	}
 
 	canonize() {
@@ -43,6 +245,7 @@ export default class SimplexMethod {
 							line.push(math.number(0));
 						}
 					});
+					this.free.push(this.c.length);
 					break;
 				}
 
@@ -55,6 +258,7 @@ export default class SimplexMethod {
 							line.push(math.number(0));
 						}
 					});
+					this.free.push(this.c.length);
 					break;
 				}
 
@@ -76,7 +280,10 @@ export default class SimplexMethod {
 			conditions: this.conditions.slice(0),
 
 			inverted: this.inverted,
-			size: this.size
+			size: this.size,
+
+			basis: this.basis.slice(0),
+			free: this.free.slice(0)
 		});
 	}
 

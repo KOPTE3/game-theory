@@ -7,6 +7,10 @@ math.config({
 export default math;
 
 export function toTex (number) {
+	if (math.isInteger(number)) {
+		number = math.number(number);
+	}
+
 	switch (math.typeof(number)) {
 		case 'Fraction': {
 			return `${number.s === 1 ? '' : '-'}\\dfrac{${number.n}}{${number.d}}`;
