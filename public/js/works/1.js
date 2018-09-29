@@ -27,7 +27,7 @@ const task = window.task = new SimplexMethod({
 	conditions: ['leq', 'leq', 'leq'],
 	A: [
 		[math.number(4), math.number(1), math.number(1)],
-		[math.number(1), math.number(-2), math.number(0)],
+		[math.number(1), math.number(2), math.number(0)],
 		[math.number(0), math.fraction(1, 2), math.number(4)]
 	]
 });
