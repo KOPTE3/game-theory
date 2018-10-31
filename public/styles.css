@@ -20,3 +20,44 @@
 .simplex-table td:first-child {
 	border-left: none;
 }
+
+.big-table {
+	border: 0;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.big-table td {
+	border-left: black solid 1px;
+	border-bottom: black solid 1px;
+	padding: 18px 24px;
+	text-align: center;
+}
+
+.big-table tr:first-child td {
+	border-top: black solid 1px;
+}
+
+.big-table td:last-child {
+	border-right: black solid 1px;
+}
+
+.big-table td {
+	position: relative;
+}
+
+.big-table td.strmin::after {
+	content: 'min в строке';
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 12px;
+}
+
+.big-table td.collmax::before {
+	content: 'max в столбце';
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	font-size: 12px;
+}
