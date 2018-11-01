@@ -22,10 +22,10 @@ function H(x, y) {
 	}, 0);
 }
 
-for (let N = 2; N <= 7; N++) {
+for (let N = 1; N <= 10; N++) {
 	const div = document.createElement('div');
 	const h3 = document.createElement('h3');
-	h3.textContent = `\\( \\mathbf{N} = ${N} \\)`;
+	h3.textContent = `\\( \\mathbf{N} = ${N + 1} \\)`;
 
 	div.appendChild(h3);
 	s1.appendChild(div);
@@ -41,33 +41,33 @@ for (let N = 2; N <= 7; N++) {
 	const td0 = document.createElement('td');
 	tr0.appendChild(td0);
 	tbody.appendChild(tr0);
-	for (let xi = 0; xi <= N; xi++) {
+	for (let yi = 0; yi <= N; yi++) {
 		const td = document.createElement('td');
-		td.textContent = `\\( x_{${xi}} = ${toTex(math.add(0, math.multiply(xi, math.divide(math.fraction(1), math.fraction(N)))))} \\)`;
+		td.textContent = `\\( y_{${yi}} = ${toTex(math.add(0, math.multiply(yi, math.divide(math.fraction(1), math.fraction(N + 1)))))} \\)`;
 
 		tr0.appendChild(td);
 	}
 
 	const ARR = [];
-	for (let yj = 0; yj <= N; yj++) {
+	for (let xi = 0; xi <= N; xi++) {
 		const tr = document.createElement('tr');
 		const td0 = document.createElement('td');
 		tr.appendChild(td0);
 		tbody.appendChild(tr);
 
-		const Yj = math.add(0, math.multiply(yj, math.divide(math.fraction(1), math.fraction(N))));
+		const Xi = math.add(0, math.multiply(xi, math.divide(math.fraction(1), math.fraction(N + 1))));
 
-		td0.textContent = `\\( y_{${yj}} = ${toTex(Yj)} \\)`;
+		td0.textContent = `\\( x_{${xi}} = ${toTex(Xi)} \\)`;
 		const line = [];
 		ARR.push(line);
-		for (let xi = 0; xi <= N; xi++) {
+		for (let yj = 0; yj <= N; yj++) {
 
-			const Xi = math.add(0, math.multiply(xi, math.divide(math.fraction(1), math.fraction(N))));
+			const Yj = math.add(0, math.multiply(yj, math.divide(math.fraction(1), math.fraction(N + 1))));
 			const td = document.createElement('td');
 			tr.appendChild(td);
 
 			const Hij = math.number(H(Xi, Yj));
-			const h = math.format(Hij, {precision: 3});
+			const h = math.format(Hij, {precision: 4});
 
 			td.textContent = `\\( ${h} \\)`;
 
@@ -120,6 +120,11 @@ for (let N = 2; N <= 7; N++) {
 		strong1.textContent = 'Седловой точки нет';
 	}
 
+	const h2 = document.createElement('h2');
+	s1.appendChild(h2);
+
+	h2.textContent = 'Вычисления Верхней и нижней границ';
+
 	const maxstrmins = Math.max(...strmins);
 	const mincollmaxs = Math.min(...collmaxs);
 	const gameValue = (maxstrmins + mincollmaxs) / 2;
@@ -128,11 +133,11 @@ for (let N = 2; N <= 7; N++) {
 	const mincollmaxsDiv = document.createElement('div');
 	const gameValueDiv = document.createElement('div');
 
-	mincollmaxsDiv.textContent = `Верхняя граница \\( ${math.format(mincollmaxs, {precision: 3})} \\), x${collmaxs.indexOf(mincollmaxs)}`;
-	maxstrminsDiv.textContent = `Нижняя граница \\( ${math.format(maxstrmins, {precision: 3})} \\), y${strmins.indexOf(maxstrmins)}`;
-	gameValueDiv.textContent = `Цена игры \\( ${math.format(gameValue, {precision: 3})} \\)`;
+	maxstrminsDiv.textContent = `Нижняя граница \\( ${math.format(maxstrmins, {precision: 4})} \\), x${strmins.indexOf(maxstrmins)}`;
+	mincollmaxsDiv.textContent = `Верхняя граница \\( ${math.format(mincollmaxs, {precision: 4})} \\), y${collmaxs.indexOf(mincollmaxs)}`;
+	gameValueDiv.textContent = `Цена игры \\( ${math.format(gameValue, {precision: 4})} \\)`;
 
-	s1.appendChild(mincollmaxsDiv);
 	s1.appendChild(maxstrminsDiv);
+	s1.appendChild(mincollmaxsDiv);
 	s1.appendChild(gameValueDiv);
 }
