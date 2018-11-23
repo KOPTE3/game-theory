@@ -61,3 +61,33 @@
 	right: 0;
 	font-size: 12px;
 }
+
+.broun {
+	width: 100%;
+	text-align: center;
+}
+
+.broun {
+	border: none;
+	border-collapse: collapse;
+}
+
+.broun td,
+.broun th {
+	border-left: 1px solid #000;
+	border-right: 1px solid #000;
+}
+
+.broun td:first-child,
+.broun th:first-child {
+	border-left: none;
+}
+
+.broun td:last-child,
+.broun th:last-child {
+	border-right: none;
+}
+
+.broun thead {
+	border-bottom: 1px solid #000;
+}

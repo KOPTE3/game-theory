@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>[ЛР2] Методы теории игр в информационной безопасности</title>
+	<link rel="stylesheet" href="/styles.css">
+	<script src="/vendor/math.js"></script>
+	<script src="/vendor/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+</head>
+<body>
+<header>
+	<h1>Решение матричных игр с нулевой суммой аналитическим (матричным) и численным (Брауна–Робинсона) методами</h1>
+	<h2>Лабораторная работа №2</h2>
+
+	<p><strong>Исполнитель:</strong> Остапенко Анатолий Викторович, группа ИУ8-112</p>
+	<p><em>Вариант 7</em></p>
+</header>
+
+<main>
+	<h3>Цель работы</h3>
+	<p>Изучить аналитический (метод обратной матрицы) и численный (метод Брауна–Робинсона) подходы к нахождению смешанных стратегий в антагонистической игре двух лиц в нормальной форме.</p>
+
+	<h3>Задание</h3>
+	<p>В нижеприведенной таблице строки соответствуют стратегиям игрока A, столбцы – стратегиям игрока B. Необходимо выполнить \( N=25 \) итераций численного метода</p>
+
+	<h3>Исходные данные</h3>
+	<p>
+		$$\mathbf{C} = \begin{pmatrix}
+		6 & 18 & 5 \\
+		17 & 13 & 15 \\
+		9 & 13 & 19
+		\end{pmatrix}$$
+	</p>
+</main>
+
+
+<section>
+	<h3>Выполнение работы - аналитическое решение</h3>
+
+	<h4>Обратная матрица</h4>
+
+	<div id="div1"></div>
+
+	<h4>Вычисления по формулам</h4>
+
+	<div id="div2"></div>
+</section>
+
+<section id="section1">
+	<h3>Решение методом Брауна–Робинсона</h3>
+
+	<table class="broun">
+		<thead>
+		<tr>
+			<th>№пп</th>
+			<th>Выбор A</th>
+			<th>Выбор B</th>
+			<th>\( x_1 \)</th>
+			<th>\( x_2 \)</th>
+			<th>\( x_3 \)</th>
+			<th>\( y_1 \)</th>
+			<th>\( y_2 \)</th>
+			<th>\( y_3 \)</th>
+			<th>\( V^{max} \)</th>
+			<th>\( V^{min} \)</th>
+			<th>\( v \)</th>
+			<th>\( \varepsilon \)</th>
+		</tr>
+		</thead>
+		<tbody id="tbody">
+
+		</tbody>
+	</table>
+
+	<p>Приближённые смешанные стратегии:</p>
+	<div id="divx"></div>
+	<div id="divy"></div>
+	<p>Приближённая погрешность:</p>
+	<div id="diveps"></div>
+</section>
+
+<script type="module" src="/js/works/2.js"></script>
+
+<script src="/reload/reload.js"></script>
+</body>
+</html>
