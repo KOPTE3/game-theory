@@ -1,5 +1,9 @@
 import math from '../lib/math.js';
 
+/**
+ * Всевозможные коалиции игроков
+ * @type {*[]}
+ */
 const COALITIONS = [
 	[],
 
@@ -23,6 +27,10 @@ const COALITIONS = [
 	[1, 2, 3, 4]
 ];
 
+/**
+ * Значения характеристической функции
+ * @type {number[]}
+ */
 const WEIGHTS = [
 	0,
 	2,
@@ -45,20 +53,19 @@ const WEIGHTS = [
 	10
 ];
 
+// заполняем таблицу соответствий
 const map = new Map();
-
 for (let i = 0; i < COALITIONS.length; i++) {
-	console.log('[' + COALITIONS[i] + ']', WEIGHTS[i]);
 	map.set(COALITIONS[i] + '', WEIGHTS[i]);
 }
-console.dir(map);
 
 /**
+ * Пересечение двух множеств
  * @param {number[]} a
  * @param {number[]} b
  * @returns {number[]}
  */
-function pere(a, b) {
+function intersection(a, b) {
 	const r = [];
 	for (const number of a) {
 		if (b.includes(number)) {
@@ -70,42 +77,38 @@ function pere(a, b) {
 
 
 /**
+ * Объединение двух множеств
  * @param {number[]} a
  * @param {number[]} b
  * @returns {number[]}
  */
-function obje(a, b) {
+function union(a, b) {
 	return [...new Set([...a, ...b])].sort();
 }
 
 /**
+ * Исключение из множества
  * @param {number[]} a
  * @param {number[]} b
  * @returns {number[]}
  */
-function minus(a, b) {
+function exception(a, b) {
 	return a.filter(item => !b.includes(item));
 }
 
 function logW(arr) {
-	console.log('W(' + arr + ')=', map.get(arr + ''));
-
+	console.log('W(' + arr + ') = ' + map.get(arr + ''));
 }
 
 function superAdditivity() {
 	for (const c1 of COALITIONS) {
 		for (const c2 of COALITIONS) {
-			if (pere(c1, c2).length === 0) {
-				const o = obje(c1, c2);
+			if (intersection(c1, c2).length === 0) {
+				const o = union(c1, c2);
 
 				const w1 = map.get(c1 + '');
 				const w2 = map.get(c2 + '');
 				const w12 = map.get(o + '');
-
-				// logW(c1);
-				// logW(c2);
-				// logW(o);
-				// console.log();
 
 				if (w12 < w1 + w2) {
 					console.warn('Игра не является супераддитивной:');
@@ -126,18 +129,13 @@ superAdditivity();
 function convexity() {
 	for (const c1 of COALITIONS) {
 		for (const c2 of COALITIONS) {
-			const p = pere(c1, c2);
-			const o = obje(c1, c2);
+			const p = intersection(c1, c2);
+			const o = union(c1, c2);
 
 			const w1 = map.get(c1 + '');
 			const w2 = map.get(c2 + '');
 			const wP = map.get(p + '');
 			const wO = map.get(o + '');
-
-			// logW(c1);
-			// logW(c2);
-			// logW(o);
-			// console.log();
 
 			if (wP + wO < w1 + w2) {
 				console.warn('Игра не является выпуклой:');
@@ -158,7 +156,6 @@ convexity();
 
 function findShapley() {
 	const shapley = [];
-	// math.factorial(n)
 	for (let i = 1; i <= 4; i++) {
 		let temp = [];
 		for (const coalition of COALITIONS) {
@@ -166,7 +163,7 @@ function findShapley() {
 				temp.push(
 					math.factorial(coalition.length - 1) *
 					math.factorial(4 - coalition.length) *
-					(map.get(coalition + '') - map.get(minus(coalition, [i]) + ''))
+					(map.get(coalition + '') - map.get(exception(coalition, [i]) + ''))
 				);
 			}
 		}
@@ -175,7 +172,6 @@ function findShapley() {
 	}
 
 	console.info('Вектор Шепли:', shapley);
-
 	console.log('Сумма вектора Шепли', math.sum(...shapley));
 
 	if (math.sum(...shapley) !== map.get([1, 2, 3, 4] + '')) {
