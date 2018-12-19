@@ -62,6 +62,50 @@
 	font-size: 12px;
 }
 
+.search-table {
+	border: 0;
+	border-collapse: separate;
+	border-spacing: 0;
+}
+
+.search-table td {
+	border-bottom: black solid 1px;
+	padding: 6px 28px;
+	text-align: center;
+}
+
+.search-table tr:first-child td {
+	border-top: black solid 1px;
+}
+
+.search-table td:first-child {
+	border-left: black solid 1px;
+}
+
+.search-table td:last-child {
+	border-right: black solid 1px;
+}
+
+.search-table td {
+	position: relative;
+}
+
+.search-table td.strmin::after {
+	content: 'min в строке';
+	position: absolute;
+	top: 0;
+	left: 0;
+	font-size: 12px;
+}
+
+.search-table td.collmax::before {
+	content: 'max в столбце';
+	position: absolute;
+	bottom: 0;
+	right: 0;
+	font-size: 12px;
+}
+
 .broun {
 	width: 100%;
 	text-align: center;
